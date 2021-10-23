@@ -4,15 +4,20 @@ import { Formik, Form} from 'formik';
 import MyTextInput from '../../common/MyTextInput';
 import MyPhotoInput from '../../common/MyPhotoInput';
 import http from "../../../http_common";
+import { object } from 'prop-types';
 
 const RegisterPage = () => {
 
     const initState = {
         email: '',
+        phone: '',
         password: '',
         confirmPassword: '',
         fio: '',
-        photo: null
+        photo: null,
+        errors: {
+            email: ''
+        }
     };
 
     const formikRef = useRef();
@@ -24,31 +29,34 @@ const RegisterPage = () => {
         //formData.append("email", values.email);
         //у форічі біжимо по initState і передаємо дані в форму 
         //key - email, value-ff@dd.dd
-        Object.entries(values).forEach(([key, value]) => formData.append(key, value));
+        Object.entries(values).forEach
+        (
+            ([key, value]) => formData.append(key, value)
+            );
 
         http.post("api/account/register", formData,
         {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
+
         }).then(resp => {
+
             console.log("Good Result", resp);
-        }, bad =>{
-            console.log(bad.response.data);
+        },
+        bad => {
+            const {errors} = bad.response.data;
+            if(errors.email) {
+                let stringa="";
+                errors.email.forEach(message => {
+                    stringa += message + " ";
+                    //console.log(message);
+                    formikRef.current.setFieldError("Email" ,message);
+                });
+            }
         });
-
-        // console.log("Server submit data", values);
-
-        // console.log("Server submit file", JSON.stringify(
-        //     { 
-        //       fileName: values.photo.name, 
-        //       type: values.photo.type,
-        //       size: `${values.photo.size} bytes`
-        //     },
-        //     null,
-        //     2
-        //   ));
-    }
+        }
+    
 
 
     return (
