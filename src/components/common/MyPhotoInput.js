@@ -9,7 +9,7 @@ const MyPhotoInput = ({
 
     const [photo, setPhoto] = useState("https://bytes.ua/wp-content/uploads/2017/08/no-image.png");
     const [error, setError] = useState("");
-    const [meta] = useField(props);
+    const [field,   meta] = useField(props);
 
     const selectImage = (event) => {
         const files= event.currentTarget.files;
