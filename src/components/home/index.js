@@ -4,24 +4,23 @@ import http from "../../http_common";
 
 const HomePage = () => {
 
-   const [users, setUsers] = useState([
+    const [users, setUsers] = useState([
+        {
+            fio: "Cинок Маслай",
+            email: "vv@vv.com",
+            image: "/images/vvhwjfpp.12c.jpg"
+        }
+    ]);
 
-    {
-        fio: "Stelmax",
-        email: "kateryna@gamil.com",
-        image: ""
-    }
-   ])
-
-   useEffect(() => {
-    http.get("api/users/all")
-        .then(resp => {
-            console.log(resp);
-            setUsers(resp.data);
-        });
-   
-}, [])
-
+    useEffect(() => {
+        http.get("api/users/all")
+            .then(resp => {
+                console.log(resp);
+                setUsers(resp.data);
+            });
+       
+    }, [])
+    
     return (
         <div className="row">
             <h1 className="text-center">Головна сторінка</h1>
@@ -39,9 +38,11 @@ const HomePage = () => {
                             return (
                                 <tr key={index}>
                                     <td>{user.fio}</td>
-                                    <td>{user.email}</td>
-                                    <td>
-                                        <img scr ={"http://localhost:15247"+user.image} alt="Camogon" Width = "150" />
+                                    <td>{user.email}
+                                    </td>
+                           
+<td>
+                                        <img src={"http://localhost:15247"+user.image} alt="Самогон" width="150" />
                                     </td>
                                 </tr>
 

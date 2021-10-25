@@ -16,9 +16,9 @@ const RegisterPage = () => {
         confirmPassword: '',
         fio: '',
         photo: null,
-        errors: {
-            email: ''
-        }
+        // errors: {
+        //     email: ''
+        // }
     };
 
     const formikRef = useRef();
