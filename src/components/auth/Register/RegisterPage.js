@@ -1,83 +1,64 @@
-import React, { useRef, useState } from 'react'
+import React, {useRef, useState} from 'react'
 import validationFields from './validation';
-import { Formik, Form } from 'formik';
+import { Formik, Form} from 'formik';
 import MyTextInput from '../../common/MyTextInput';
 import MyPhotoInput from '../../common/MyPhotoInput';
-import http from "../../../http_common";
-import { object } from 'prop-types';
 import { useHistory } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { RegisterUser } from '../../../actions/auth';
 
 const RegisterPage = () => {
 
     const initState = {
         email: '',
-        phone: '',
         password: '',
         confirmPassword: '',
         fio: '',
-        photo: null,
-        // errors: {
-        //     email: ''
-        // }
+        photo: null
     };
 
+    const dispatch = useDispatch();
     const formikRef = useRef();
     const titleRef = useRef();
-
     const [invalid, setInvalid] = useState([]);
     const history = useHistory();
 
-    function onSubmitHandler(values) {
+
+    const onSubmitHandler = (values) => {
 
         //Робимо форму, у якій можна відправити файл
         const formData = new FormData();
         //formData.append("email", values.email);
         //у форічі біжимо по initState і передаємо дані в форму 
         //key - email, value-ff@dd.dd
-        Object.entries(values).forEach(
-            ([key, value]) => formData.append(key, value)
-        );
-
-        http.post("api/account/register", formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then(resp => {
-
+        Object.entries(values).forEach(([key, value]) => formData.append(key, value));
+        
+        
+        dispatch (RegisterUser(formData))
+            .then(result=> {
                 history.push("/");
-            },
-                bad => {
-                    const errors = bad.response.data.errors;
-
-                    Object.entries(errors).forEach(([key, values]) => {
-                        let message = '';
-                        values.forEach(text => message += text + " ");
-                        formikRef.current.setFieldError(key, message);
+            }) 
+            .catch(ex=>{
+                const {errors}=ex;
+                Object.entries(errors).forEach(([key, values]) => {
+                            let message = '';
+                            values.forEach(text=> message+=text+" ");
+                            formikRef.current.setFieldError(key,message);
+                        });
+            
+                        setInvalid(errors.invalid);
+                        titleRef.current.scrollIntoView({ behavior: 'smooth' })
                     });
 
-                    setInvalid(errors.invalid);
-                    console.log(bad.response.data);
-                    titleRef.current.scrollIntoView({ behavior: 'smooth' });
-                });
 
-
-        // const {errors} = bad.response.data;
-        // if(errors.email) {
-        //     let stringa="";
-        //     errors.email.forEach(message => {
-        //         stringa += message + " ";
-        //         console.log(message);
-        //         formikRef.current.setFieldError("Email" ,message);
-        //     });
-        // }
+   
     }
-
 
 
     return (
         <div className="row">
             <h1 ref={titleRef} className="text-center">Реєстрація</h1>
+
             {
                 invalid && invalid.length > 0 &&
                 <div className="alert alert-danger">

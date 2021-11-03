@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import validationFields from './validation';
 import { Formik, Form } from 'formik';
 import MyTextInput from '../../common/MyTextInput';
+import { LoginUser } from '../../../actions/auth';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
+
 
 const LoginPage = () => {
 
@@ -10,8 +14,19 @@ const LoginPage = () => {
         password: ''
     };
 
+     const dispatch = useDispatch();
+     const [invalid, setInvalid] = useState([]);
+     const history = useHistory();
+
     const onSubmitHandler = (values) => {
-        console.log("Server submit data", values);
+      dispatch(LoginUser(values))
+      .then(result => {
+          history.push("/");
+
+      })
+      .catch (ex => {
+          setInvalid(ex.errors.invalid);
+      })
     }
 
 
