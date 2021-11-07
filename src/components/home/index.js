@@ -1,31 +1,39 @@
-import React, { useState, useEffect } from 'react'
-import http from "../../http_common";
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { UsersAll, UserDelete } from '../../actions/users';
+import { Link } from 'react-router-dom';
+
 const HomePage = () => {
 
-    const [users, setUsers] = useState([
-        {
-            fio: "Stelmash",
-            email: "vv@vv.com",
-            image: "/images/vvhwjfpp.12c.jpg"
-        }
-    ]);
-    const onDelete= (value) => {
+    const dispatch = useDispatch();
+    const {list} = useSelector (state=> state.users);
 
-        http.post("api/users/delete", value);
-       
-    }
+    
+
    
-
     useEffect(() => {
-        http.get("api/users/all")
-            .then(resp => {
-                console.log(resp);
-                setUsers(resp.data);
-            });
+        try{
+
+            dispatch(UsersAll())
+            .then()
+            .catch();
+        }
+        catch(error){
+            console.log("Server error global");
+        }
        
     }, [])
-    
+    const onDeleteClick= (id) => {
+        try{
+
+            dispatch(UserDelete(id))
+            .then()
+            .catch();
+        }
+        catch(error){
+            console.log("Server error global");
+        }
+    }
     return (
         <div className="row">
             <h1 className="text-center">Головна сторінка</h1>
@@ -36,11 +44,12 @@ const HomePage = () => {
                         <th scope="col">ФІО</th>
                         <th scope="col">Email</th>
                         <th scope="col">Image</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        users.map((user, index) => {
+                        list.map((user, index) => {
                             return (
                                 <tr key={index}>
                                     <td>{user.fio}</td>
@@ -50,9 +59,12 @@ const HomePage = () => {
                                         <img src={"http://localhost:15247"+user.image} alt="Самогон" width="150" />
                                     </td>
                                     <td>
-                                        <button className="btn btn-danger"  onClick={() => onDelete(user.email)} >Delete</button>
-
+                                        <button className="btn btn-danger" onClick={() => onDeleteClick(user.id)}>Delete</button>
+                                        
                                     </td>
+                                    <Link className="btn btn-success" to={`/user/edit/${user.id}"/`}>Edit</Link>
+                                    
+   
                                 </tr>
 
                             );

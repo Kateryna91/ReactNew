@@ -26,6 +26,10 @@ function App() {
           <Route exact path="/register">
             <RegisterPage />
           </Route>
+
+          <Route exact path="/user/edit/:id">
+            <RegisterPage />
+          </Route>
         </Switch>
       </div>
     </Router>
